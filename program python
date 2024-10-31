@@ -1,0 +1,46 @@
+pip install numpy imageio
+import numpy as np
+import imageio
+import matplotlib.pyplot as plt
+
+def display_images(images, titles):
+    plt.figure(figsize=(15, 10))
+    for i, (img, title) in enumerate(zip(images, titles)):
+        plt.subplot(1, len(images), i + 1)
+        plt.imshow(img)
+        plt.title(title)
+        plt.axis('off')
+    plt.show()
+
+def process_image(image_path):
+    # Membaca gambar
+    image = imageio.imread(image_path)
+    
+    # Memisahkan channel warna
+    R = image[:, :, 0]
+    G = image[:, :, 1]
+    B = image[:, :, 2]
+
+    # Konversi ke grayscale
+    grayscale = np.dot(image[..., :3], [0.2989, 0.5870, 0.1140])
+    
+    # Konversi ke threshold (biner)
+    threshold_value = 128
+    binary = (grayscale > threshold_value).astype(np.uint8) * 255
+
+    return R, G, B, grayscale, binary
+
+# Daftar gambar
+image_files = ['papaya.jpg', 'cassava.jpg', 'kenikir.jpg']
+titles = ['Daun Pepaya', 'Singkong', 'Kenikir']
+
+for image_file in image_files:
+    R, G, B, grayscale, binary = process_image(image_file)
+    
+    # Menampilkan hasil
+    display_images([R, G, B, grayscale, binary], 
+                   [f'Channel R ({image_file})', 
+                    f'Channel G ({image_file})', 
+                    f'Channel B ({image_file})', 
+                    f'Grayscale ({image_file})', 
+                    f'Binary ({image_file})'])
